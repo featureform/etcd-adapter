@@ -1,4 +1,4 @@
-module github.com/sebastianliu/etcd-adapter
+module github.com/featureform/etcd-adapter
 
 go 1.14
 

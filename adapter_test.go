@@ -107,7 +107,6 @@ func testAutoSave(t *testing.T, pathKey string, etcdEndpoints []string) {
 }
 
 func TestAdapters(t *testing.T) {
-
 	testSaveLoad(t, "casbin_policy_test", []string{"http://127.0.0.1:2379"})
 	testAutoSave(t, "casbin_policy_test", []string{"http://127.0.0.1:2379"})
 }
