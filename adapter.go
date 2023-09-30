@@ -6,7 +6,6 @@ package etcdadapter
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"regexp"
 	"runtime"
@@ -110,7 +109,7 @@ func (a *Adapter) LoadPolicy(model model.Model) error {
 	}
 	if len(getResp.Kvs) == 0 {
 		// there is no policy
-		return errors.New("there is no policy in ETCD for the moment")
+		println("etcd-adapter: there is no policy in ETCD for the moment")
 	}
 	for _, kv := range getResp.Kvs {
 		err = json.Unmarshal(kv.Value, &rule)
