@@ -82,7 +82,9 @@ func newAdapter(etcdConf client.Config, key string) *Adapter {
 func (a *Adapter) connect() {
 	println("IN ADAPTER", a.etcdConf.Endpoints[0])
 	connection, err := client.New(a.etcdConf)
+
 	if err != nil {
+		fmt.Errorf("error in adapter: %v", err)
 		panic(err)
 	}
 	a.conn = connection
