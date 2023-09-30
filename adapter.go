@@ -52,24 +52,24 @@ type CasbinRule struct {
 
 // Adapter represents the ETCD adapter for policy storage.
 type Adapter struct {
-	etcdEndpoints []string
-	key           string
+	etcdConf client.Config
+	key      string
 
 	// etcd connection client
 	conn *client.Client
 }
 
-func NewAdapter(etcdEndpoints []string, key string) *Adapter {
-	return newAdapter(etcdEndpoints, key)
+func NewAdapterFromConfig(etcdConf client.Config, key string) *Adapter {
+	return newAdapter(etcdConf, key)
 }
 
-func newAdapter(etcdEndpoints []string, key string) *Adapter {
+func newAdapter(etcdConf client.Config, key string) *Adapter {
 	if key == "" {
 		key = DEFAULT_KEY
 	}
 	a := &Adapter{
-		etcdEndpoints: etcdEndpoints,
-		key:           key,
+		etcdConf: etcdConf,
+		key:      key,
 	}
 	a.connect()
 
@@ -80,14 +80,7 @@ func newAdapter(etcdEndpoints []string, key string) *Adapter {
 }
 
 func (a *Adapter) connect() {
-	etcdConf := client.Config{
-		Endpoints:            a.etcdEndpoints,
-		DialTimeout:          DIALTIMEOUT,
-		DialKeepAliveTimeout: DIALKEEPALIVETIMEOUT,
-		DialKeepAliveTime:    DIALKEEPALIVETIME,
-	}
-
-	connection, err := client.New(etcdConf)
+	connection, err := client.New(a.etcdConf)
 	if err != nil {
 		panic(err)
 	}

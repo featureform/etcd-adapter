@@ -3,7 +3,9 @@ package etcdadapter
 import (
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/util"
+	clientv3 "go.etcd.io/etcd/client/v3"
 	"testing"
+	"time"
 )
 
 func testGetPolicy(t *testing.T, e *casbin.Enforcer, res [][]string) {
@@ -26,7 +28,11 @@ func initPolicy(t *testing.T, pathKey string, etcdEndpoints []string) {
 		panic(err)
 	}
 
-	a := NewAdapter(etcdEndpoints, pathKey)
+	etcdConfig := clientv3.Config{
+		Endpoints:   etcdEndpoints,
+		DialTimeout: time.Second * 1,
+	}
+	a := NewAdapterFromConfig(etcdConfig, pathKey)
 	// This is a trick to save the current policy to the ETCD.
 	// We can't call e.SavePolicy() because the adapter in the enforcer is still the file adapter.
 	// The current policy means the policy in the Casbin enforcer (aka in memory).
@@ -56,7 +62,11 @@ func testSaveLoad(t *testing.T, pathKey string, etcdEndpoints []string) {
 	// Now the ETCD has policy, so we can provide a normal use case.
 	// Create an adapter and an enforcer.
 	// NewEnforcer() will load the policy automatically.
-	a := NewAdapter(etcdEndpoints, pathKey)
+	etcdConfig := clientv3.Config{
+		Endpoints:   etcdEndpoints,
+		DialTimeout: time.Second * 1,
+	}
+	a := NewAdapterFromConfig(etcdConfig, pathKey)
 	e, err := casbin.NewEnforcer("examples/rbac_model.conf", a)
 	if err != nil {
 		panic(err)
@@ -73,7 +83,11 @@ func testAutoSave(t *testing.T, pathKey string, etcdEndpoints []string) {
 	// Now the ETCD has policy, so we can provide a normal use case.
 	// Create an adapter and an enforcer.
 	// NewEnforcer() will load the policy automatically.
-	a := NewAdapter(etcdEndpoints, pathKey)
+	etcdConfig := clientv3.Config{
+		Endpoints:   etcdEndpoints,
+		DialTimeout: time.Second * 1,
+	}
+	a := NewAdapterFromConfig(etcdConfig, pathKey)
 	e, err := casbin.NewEnforcer("examples/rbac_model.conf", a)
 	if err != nil {
 		panic(err)
