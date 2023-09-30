@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/casbin/casbin"
+	"github.com/casbin/casbin/v2"
 	"github.com/featureform/etcd-adapter"
 )
 
@@ -11,18 +11,18 @@ func main() {
 	// If not provided, the adapter will use the default value casbin_policy.
 	a := etcdadapter.NewAdapter([]string{"http://127.0.0.1:2379"}, "casbin_policy_test") // Your etcd endpoints and the path key.
 
-	e := casbin.NewEnforcer("rbac_model.conf", a)
+	e, _ := casbin.NewEnforcer("rbac_model.conf", a)
 
 	// Load the policy from ETCD.
-	e.LoadPolicy()
+	_ = e.LoadPolicy()
 
 	// Check the permission.
-	e.Enforce("alice", "data1", "read")
+	_, _ = e.Enforce("alice", "data1", "read")
 
 	// Modify the policy.
 	// e.AddPolicy(...)
 	// e.RemovePolicy(...)
 
 	// Save the policy back to DB.
-	e.SavePolicy()
+	_ = e.SavePolicy()
 }
